@@ -1,3 +1,4 @@
+/* Ativar configuração Ole Automation*/
 sp_configure 'Advanced Options', 1
 GO
 RECONFIGURE
@@ -57,3 +58,30 @@ as
 	EXEC @responsecode = sp_OADestroy @ws;
 	IF @responsecode <> 0
 		RAISERROR('Unable to close HTTP connection.', 10, 1);
+END;
+
+/* Exemplo de uso */
+BEGIN
+	DECLARE @RESULTADO TABLE(VALOR VARCHAR(MAX));
+
+	INSERT @RESULTADO
+	EXEC	[dbo].[webRequest]
+			@url = N'https://viacep.com.br/ws/14051260/json',
+			@bearertoken = NULL,
+			@contentType = NULL,
+			@content = NULL,
+			@method= 'GET';
+
+	SELECT JSON_VALUE(VALOR, '$.cep') as cep,
+	       JSON_VALUE(VALOR, '$.logradouro') as logradouro,
+	       JSON_VALUE(VALOR, '$.complemento') as complemento,
+	       JSON_QUERY(VALOR, '$.unidade') as unidade,
+	       JSON_QUERY(VALOR, '$.bairro') as bairro,
+	       JSON_QUERY(VALOR, '$.localidade') as localidade,
+	       JSON_QUERY(VALOR, '$.uf') as uf,
+	       JSON_QUERY(VALOR, '$.ibge') as ibge
+	       JSON_QUERY(VALOR, '$.gia') as gia,
+	       JSON_QUERY(VALOR, '$.ddd') as ddd,
+	       JSON_QUERY(VALOR, '$.siafi') as siafi
+	FROM @RESULTADO;
+END
