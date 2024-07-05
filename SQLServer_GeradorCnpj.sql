@@ -1,3 +1,7 @@
+CREATE OR ALTER PROCEDURE [dbo].[GenerateCNPJ] 
+@formatar varchar(1) = 'S',
+@CNPJ VARCHAR(MAX) OUTPUT
+AS
 begin
     DECLARE @n INTEGER;
     DECLARE @n1 INTEGER;
@@ -14,8 +18,7 @@ begin
     DECLARE @n12 INTEGER;    
     DECLARE @d1 INTEGER;
     DECLARE @d2 INTEGER;
-	  DECLARE @cnpj VARCHAR(max);
-           
+	           
     SET @n = 9;
     SET @n1 = CAST(( @n + 1 ) * RAND(CAST(NEWID() AS VARBINARY )) AS INT);
     SET @n2 = CAST(( @n + 1 ) * RAND(CAST(NEWID() AS VARBINARY )) AS INT);
@@ -42,6 +45,14 @@ begin
     IF @d2 >= 10
         SET @d2 = 0;
 
-	SET @cnpj = CONCAT(@n1, @n2, '.', @n3, @n4, @n5, '.', @n6, @n7, @n8, '/', @n9, @n10, @n11, @n12, '-', @d1, @d2);
+	IF @formatar = 'S'
+		SET @cnpj = CONCAT(@n1, @n2, '.', @n3, @n4, @n5, '.', @n6, @n7, @n8, '/', @n9, @n10, @n11, @n12, '-', @d1, @d2);
+	ELSE
+		SET @cnpj = CONCAT(@n1, @n2, @n3, @n4, @n5, @n6, @n7, @n8, @n9, @n10, @n11, @n12, @d1, @d2);
 	print @cnpj;
 end;
+
+/* Exemplo de uso */
+declare @cnpj VARCHAR(MAX);
+EXEC GenerateCNPJ 'S', @cnpj OUTPUT
+SELECT @cnpj
