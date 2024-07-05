@@ -1,4 +1,6 @@
-/* Ativar configuração Ole Automation*/
+/* Ativar configuração Ole Automation 
+	https://learn.microsoft.com/en-us/sql/database-engine/configure-windows/ole-automation-procedures-server-configuration-option?view=sql-server-ver16
+*/
 sp_configure 'Advanced Options', 1
 GO
 RECONFIGURE
